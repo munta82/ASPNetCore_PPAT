@@ -1,0 +1,16 @@
+﻿@*@using Cloud.PPATSApp.Core;
+    @using Cloud.PPATSApp.Models.ViewModels;
+    @{
+        var objEmployeeInfo = TempDataExtensions.Get<EmployeeInfoViewModel>(TempData, "empInfo") as EmployeeInfoViewModel;
+    }*@
+@{
+    ViewData["Title"] = "AdminConfig";
+}
+@model Cloud.PPATSApp.Models.ViewModels.EmployeeInfoViewModel
+<h4>AdminConfig</h4>
+@{
+    Html.RenderPartial("_EmployeeInfo", Model);//With out passing also worknigs
+}
+
+
+@*@Html.Partial("_EmployeeInfo");*@

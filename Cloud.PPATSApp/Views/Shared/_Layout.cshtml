@@ -1,0 +1,150 @@
+﻿@model Cloud.PPATSApp.Models.ViewModels.EmployeeInfoViewModel;
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cloud.PPATSApp</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jqueryui/jquery-ui.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <link rel="stylesheet" href="~/lib/jqueryui/jquery-ui.css" />
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.unobtrusive-ajax.js" type="text/javascript"></script>
+    <style>
+        left_wrap {
+            border: 1px solid #f00;
+            width: 400px;
+            height: 300px;
+            float: left;
+        }
+
+        .right_wrap {
+            border: 1px solid #0f0;
+            width: 100px;
+            height: 300px;
+            float: left;
+        }
+
+        .left1, .left2 {
+            float: left;
+            width: 49%;
+            border: 1px solid #000;
+            height: 40px;
+        }
+
+        .right1, .right2 {
+            border: 1px solid #000;
+            height: 80px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-2 logo"><img src="~/Images/site_logo.jpg" height="50px" width="50px" /></div>
+                <div class="col-8 banner"><img src="~/Images/baner_logo1.jpg" height="50px" width="250px" /></div>
+                <div class="col-2 greybg" style="align-content:flex-end; vertical-align:middle; align-items:right; padding-right:5px;">
+                    Welcome <b>@Cloud.PPATSApp.Core.Authorization.CurrentUser.EmpFirstName</b><br /> <br />
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Logout</a>
+                </div>
+            </div>
+        </div>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Cloud.PPATSApp</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <ul class="navbar-nav flex-grow-1">
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="PPAT" asp-action="ConstituencySettings">AC Settings</a>
+                        </li>
+
+                        @if (Cloud.PPATSApp.Core.Authorization.CurrentUser.EmpApplications.Contains("PPAT"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="PPAT" asp-action="Index">PPAT</a>
+                            </li>
+                        }
+
+                        @if (Cloud.PPATSApp.Core.Authorization.CurrentUser.EmpApplications.Contains("PIG"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="PIG" asp-action="Index">PIG</a>
+                            </li>
+                        }
+                        @if (Cloud.PPATSApp.Core.Authorization.CurrentUser.EmpApplications.Contains("SS"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="SS" asp-action="Index">SS</a>
+                            </li>
+                        }
+                        @if (Cloud.PPATSApp.Core.Authorization.CurrentUser.EmpRoleName == "Admin"
+|| Cloud.PPATSApp.Core.Authorization.CurrentUser.EmpRoleName == "TechSupport")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="AdminConfig">Admin</a>
+                            </li>
+                        }
+                        @if (Cloud.PPATSApp.Core.Authorization.CurrentUser.EmpRoleName == "Admin"
+|| Cloud.PPATSApp.Core.Authorization.CurrentUser.EmpRoleName == "TechSupport")
+                        {
+                            <li class="nav-item" style="display:block;">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="PPAT" asp-action="PPATForm">PPAT Form</a>
+                            </li>
+
+                            <li class="nav-item" style="display: block;">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="PPAT" asp-action="PPATTest">PPAT Test</a>
+                            </li>
+
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            <!--<div class="left_wrap">
+                <div class="left1">
+                    <nav class="navbar bg-light">-->
+            <!-- Links -->
+            <!--<ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">PPAT</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">PIG</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">SS</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="left2">
+
+                </div>
+            </div>-->
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2021 - Cloud.PPATSApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

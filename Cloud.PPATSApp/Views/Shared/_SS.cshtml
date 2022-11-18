@@ -1,0 +1,479 @@
+﻿<style>
+    .modal-dialog {
+        width: 250px !important;
+    }
+
+    #tblPreview td {
+        height: 5px;
+    }
+</style>
+<h4>SS</h4>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#ddlMeasuringApp").on("change", function () {
+            $("#hdnMeasuringApp").val($(this).find("option:selected").text());
+        });
+        //Loading of page
+        $("#ddlStates").prop("disabled", true);
+        $("#ddlParliament").prop("disabled", true);
+        $("#ddlAssembly").prop("disabled", true);
+        $("#ddlMandal").prop("disabled", true);
+        $("#ddlVillage").prop("disabled", true);
+        if ($("#txtPSName").val() == null || $("#txtPSName").val() == "") {
+            $("#txtPSName").prop("disabled", false);
+        }
+        else {
+            $("#txtPSName").prop("disabled", true);
+        }
+        //Loading of page
+
+        $("#btnPSGo").click(function () {
+
+            var psCodeval = $("#txtPSCode").val();
+            if (psCodeval == "") {
+                alert("Please enter PS Code");
+                return false;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/PPAT/GetPPATPollingStationData",
+                dataType: "json",
+                cache: false,
+                async: false,
+                data: {
+                    PSCode: psCodeval
+                },
+                success: function (data) {
+                    //debugger;
+                    $("#ddlStates").val(data.stateCode);
+                    $("#ddlParliament").val(data.pccode);
+                    $("#ddlAssembly").val(data.accode);
+                    $("#ddlMandal").val(data.mandalCode);
+                    $("#ddlVillage").val(data.villageCode);
+                    $("#txtPSName").val(data.psname);
+
+                    $("#ddlStates").prop("disabled", true);
+                    $("#ddlParliament").prop("disabled", true);
+                    $("#ddlAssembly").prop("disabled", true);
+                    $("#ddlMandal").prop("disabled", true);
+                    $("#ddlVillage").prop("disabled", true);
+                    if (data.psname == null || data.psname == "") {
+                        $("#txtPSName").prop("disabled", false);
+                    }
+                    else {
+                        $("#txtPSName").prop("disabled", true);
+                    }
+                    console.log(data);
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    //debugger;
+
+                    //console.log("AJAX ERROR:", data);
+                }
+            });
+        });
+
+
+        $("#txtSubCaste").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    type: "POST",
+                    url: "/PPAT/GetPPATSubCasteData",
+                    dataType: "json",
+                    cache: false,
+                    async: false,
+                    maxShowItems: 5,
+                    minLength: 2,
+                    data: {
+                        searchString: $("#txtSubCaste").val(),
+                        communityCode: $("#ddlCommunity").val()
+                    },
+                    success: function (data) {
+                        //debugger;
+                        response($.map(data, function (item) {
+                            //debugger;
+                            return {
+                                label: item.subCasteName,
+                                value: item.subCasteCode
+
+                            }
+                        }));
+
+                        console.log(data);
+                    },
+                    error: function (jqXhr, textStatus, errorMessage) {
+                        //debugger;
+                        if (jqXhr.responseText.indexOf('maxJsonLength') > -1) {
+                            alert("Search results exceeds max records. Plese refine your search with more characters");
+                        }
+                    }
+                });
+            },
+            minLength: 2,
+            select: function (evet, ui) {
+                //debugger;
+                var subcastecode = ui.item.value;
+                $("#txtSubCaste").val(ui.item.label);
+            }
+        });
+
+        $("#btnSave").click(function () {
+            //e.preventDefault();
+            //var selectedOption = $("#CountryId option:selected").text();
+            //// Add the selected drop down text to a hidden field
+            //$("<input/>", { type: 'hidden', name: 'countryName' }).val(selectedOption).appendTo("#someForm");
+
+
+            $("#ddlStates").prop("disabled", false);
+            $("#ddlParliament").prop("disabled", false);
+            $("#ddlAssembly").prop("disabled", false);
+            $("#ddlMandal").prop("disabled", false);
+            $("#ddlVillage").prop("disabled", false);
+            $("#txtPSName").prop("disabled", false);
+
+            $("form").attr("action", "/SS/SaveSSForm");
+        });
+
+        $("#btnPreview").click(function () {
+
+            $("#ddlStates").prop("disabled", false);
+            $("#ddlParliament").prop("disabled", false);
+            $("#ddlAssembly").prop("disabled", false);
+            $("#ddlMandal").prop("disabled", false);
+            $("#ddlVillage").prop("disabled", false);
+            $("#txtPSName").prop("disabled", false);
+
+            $("#lblMeasuringApplication").text($("#ddlMeasuringApp option:selected").text());
+            $("#lblState").text($("#ddlStates option:selected").text());
+            $("#lblParliament").text($("#ddlParliament option:selected").text());
+            $("#lblAssembly").text($("#ddlAssembly option:selected").text());
+            $("#lblMandal").text($("#ddlMandal option:selected").text());
+            $("#lblVillage").text($("#ddlVillage option:selected").text());
+
+            $("#lblPSName").text($("#txtPSName").val());
+            $("#lblPSCode").text($("#txtPSCode").val());
+            $("#lblName").text($("#txtUserDisplayName").val());
+            $("#lblAge").text($("#txtUserAge").val());
+            $("#lblGender").text($("#ddlGender option:selected").text());
+            $("#lblMobile").text($("#txtMobile").val());
+            $("#lblEducation").text($("#ddlEducation option:selected").text());
+            $("#lblOccupation").text($("#txtOccupation").val());
+
+            $("#lblCommunity").text($("#ddlCommunity option:selected").text());
+            $("#lblSubCaste").text($("#txtSubCaste").val());
+            $("#lblIF").text($("#ddlIFParty option:selected").text());
+            $("#lblSF").text($("#ddlPPAT_SF option:selected").text());
+            $("#lblPRF").text($("#ddlPPAT_VPF option:selected").text());
+            $("#lblVPF").text($("#ddlPPAT_VPF option:selected").text());
+            $("#lblPIF").text($("#ddlPPAT_PIF option:selected").text());
+            $("#lblRemarks").text($("#txtRemarks").val());
+        });
+
+        $("#btnPreviewClose,#btnClosePreview").click(function () {
+            $("#ddlStates").prop("disabled", true);
+            $("#ddlParliament").prop("disabled", true);
+            $("#ddlAssembly").prop("disabled", true);
+            $("#ddlMandal").prop("disabled", true);
+            $("#ddlVillage").prop("disabled", true);
+            $("#txtPSName").prop("disabled", true);
+            //$("form").attr("action", "/PPAT/ClearForm");
+        });
+
+        $("#btnClear").click(function () {
+            //$("input:text").val("");
+            //$("select#elem").prop('selectedIndex', 0);
+        })
+
+    });
+</script>
+@using (Html.BeginForm())
+{
+    <table border="1">
+        <tbody>
+            <tr>
+                <td>
+                    @*@Html.ValidationSummary(true, "Please fix the following error and then submit the form")*@
+                    <input type="hidden" id="hdnMeasuringApp" name="hdnMeasuringApp" value="" />
+                    <table class="tblRoundCorner" style="width:100%">
+                        <tr>
+                            <td>
+                                Measuring Applications<span class="field-validation-valid field-validation-error" data-valmsg-for="ddlMeasuringApp"
+                                                            data-valmsg-replace="true">*</span>
+                            </td>
+                            <td>
+                                @Html.DropDownList("ddlMeasuringApp", (IEnumerable<SelectListItem>)ViewBag.ddlMeasuringApp, "Select",
+                                new
+                                    {
+                                        @class = "form-control valid PPATDropdownlist",
+                               @data_val = "true",
+                                        @data_val_required = " required"
+                                    })
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td style="height:5px;">
+                    @*@Html.ValidationSummary(false)*@
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table border="1" style="width:100%" class="tblRoundCorner">
+                        <tr>
+                            <td>
+                                State<span class="field-validation-valid field-validation-error" data-valmsg-for="ddlStates"
+                                           data-valmsg-replace="true">*</span><br />
+                                @Html.DropDownList("ddlStates", (IEnumerable<SelectListItem>)ViewBag.ddlStates, "Select",
+                               new { @class = "form-control valid PPATDropdownlist", @data_val = "true", @data_val_required = " required" }) @*Parliament is*@
+                        </td>
+                        <td>
+                            Parliament<span class="field-validation-valid field-validation-error" data-valmsg-for="ddlParliament"
+                                            data-valmsg-replace="true">*</span><br />
+                            @Html.DropDownList("ddlParliament", ViewBag.ddlParliament as SelectList, "Select",
+                           new { @class = "form-control PPATDropdownlist valid", @data_val = "true", @data_val_required = " required" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Assembly<span class="field-validation-valid field-validation-error" data-valmsg-for="ddlAssembly"
+                                          data-valmsg-replace="true">*</span><br />
+                            @Html.DropDownList("ddlAssembly", ViewBag.ddlAssembly as SelectList, "Select",
+                           new { @class = "form-control PPATDropdownlist valid", @data_val = "true", @data_val_required = " required" })
+                        </td>
+                        <td>
+                            Mandal<span class="field-validation-valid field-validation-error" data-valmsg-for="ddlMandal"
+                                        data-valmsg-replace="true">*</span><br />
+                            @Html.DropDownList("ddlMandal", ViewBag.ddlMandal as SelectList, "Select",
+                           new { @class = "form-control PPATDropdownlist valid", @data_val = "true", @data_val_required = " required" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Village<span class="field-validation-valid field-validation-error" data-valmsg-for="ddlVillage"
+                                         data-valmsg-replace="true">*</span><br />
+                            @Html.DropDownList("ddlVillage", ViewBag.ddlVillage as SelectList, "Select",
+                           new { @class = "form-control PPATDropdownlist valid", @data_val = "true", @data_val_required = " required" })
+                        </td>
+                        <td>
+                            PS Name<br />
+                            @Html.TextBox("txtPSName", (object)ViewBag.PSName, new { @class = "form-control PPATtextbox" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            PS Code<span class="field-validation-valid field-validation-error" data-valmsg-for="txtPSCode"
+                                         data-valmsg-replace="true">*</span><br />
+                            @Html.TextBox("txtPSCode", (object)ViewBag.PSCode,
+                           new { @class = "form-control PPATtextbox valid", @data_val = "true", @data_val_required = " required" })
+                        </td>
+                        <td align="center" valign="middle">
+                            @*<button name="btnPSGo">GO</button>*@ @*id="@use.userID" Url.Action("Edit","Controller")*@
+                            <a href="#" id="btnPSGo">
+                                <img alt="go" src="~/Images/btn_go_blue.jpg" height="25px" width="25px" />
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td style="height:5px;"></td>
+        </tr>
+        <tr>
+            <td>
+                <table border="1" style="width:100%" class="tblRoundCorner">
+                    <tr>
+                        <td>
+                            Community<span class="field-validation-valid field-validation-error" data-valmsg-for="ddlCommunity"
+                                           data-valmsg-replace="true">*</span><br />
+                            @Html.DropDownList("ddlCommunity", ViewBag.ddlCommunity as SelectList, "Select",
+                           new { @class = "form-control PPATDropdownlist valid", @data_val = "true", @data_val_required = " required" })
+                        </td>
+                        <td>
+                            Sub Caste<br />
+                            @Html.TextBox("txtSubCaste", null, new { @class = "form-control PPATtextbox" })
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td>
+                            Voters<span class="field-validation-valid field-validation-error" data-valmsg-for="ddlGrade"
+                                        data-valmsg-replace="true">*</span><br />
+                            @Html.TextBox("txtVoters", string.Empty, null, new { @class = "form-control PPATtextbox" })
+                        </td>
+                        <td colspan="2">
+                            Remarks<br />
+                            @Html.TextArea("txtRemarks", string.Empty, 3, 18,null)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="center">
+                            <table id="tblPIGButtons">
+                                <tr>
+                                    <td>
+                                        @*<button id="btnPreview" name="btnPreview" class="btn-sm">Preview</button>*@
+                                        @*<input type="submit" name="btnPreview" value="Preview" formaction="PreviewForm" formmethod="post" class="btn-sm" />*@
+                                        <input id="btnPreview" value="Preview"
+                                               formnovalidate="formnovalidate"
+                                               type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" />
+                                    </td>
+                                    <td style="width:5px;"></td>
+                                    <td>
+                                        @*<button id="btnSave" name="btnSave" class="btn-sm">Save</button>*@
+                                        @*<input type="submit" name="btnSave" value="Save" formaction="SaveForm" formmethod="post" class="btn-sm" />*@
+                                        <input type="submit" id="btnSave" value="Save" class="btn btn-primary" />
+                                    </td>
+                                    <td style="width:5px;"></td>
+                                    <td>
+                                        @*<button id="btnClear" name="btnClear" class="btn-sm">Clear</button>*@
+                                        @*<input type="submit" name="btnClear" value="Clear" formaction="ClearForm" formmethod="post" class="btn-sm" />*@
+                                        <input type="button" id="btnClear" value="Clear" class="btn btn-primary cancel" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+
+                    </tr>
+                </table>
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            @*<div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="btnClosePreview">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>*@
+                            <div>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="btnClosePreview">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <table border="1" id="tblPreview">
+                                    <tr>
+                                        <td>Measuring Application</td>
+                                        <td>:</td>
+                                        <td><label id="lblMeasuringApplication"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>State</td>
+                                        <td>:</td>
+                                        <td><label id="lblState"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Parliament</td>
+                                        <td>:</td>
+                                        <td><label id="lblParliament"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Assembly</td>
+                                        <td>:</td>
+                                        <td><label id="lblAssembly"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mandal</td>
+                                        <td>:</td>
+                                        <td><label id="lblMandal"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Village</td>
+                                        <td>:</td>
+                                        <td><label id="lblVillage"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>PS Name</td>
+                                        <td>:</td>
+                                        <td><label id="lblPSName"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>PS Code</td>
+                                        <td>:</td>
+                                        <td><label id="lblPSCode"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Name</td>
+                                        <td>:</td>
+                                        <td><label id="lblName"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Age</td>
+                                        <td>:</td>
+                                        <td><label id="lblAge"></label></td>
+                                    <tr>
+                                        <td>Gender</td>
+                                        <td>:</td>
+                                        <td><label id="lblGender"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mobile</td>
+                                        <td>:</td>
+                                        <td><label id="lblMobile"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Education</td>
+                                        <td>:</td>
+                                        <td><label id="lblEducation"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Occupation</td>
+                                        <td>:</td>
+                                        <td><label id="lblOccupation"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Community</td>
+                                        <td>:</td>
+                                        <td><label id="lblCommunity"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sub-Caste</td>
+                                        <td>:</td>
+                                        <td><label id="lblSubCaste"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>IF</td>
+                                        <td>:</td>
+                                        <td><label id="lblIF"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>SF</td>
+                                        <td>:</td>
+                                        <td><label id="lblSF"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>PRF</td>
+                                        <td>:</td>
+                                        <td><label id="lblPRF"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>VPF</td>
+                                        <td>:</td>
+                                        <td><label id="lblVPF"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>PIF</td>
+                                        <td>:</td>
+                                        <td><label id="lblPIF"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Remarks</td>
+                                        <td>:</td>
+                                        <td><label id="lblRemarks"></label></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnPreviewClose">Close</button>
+                                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+}
